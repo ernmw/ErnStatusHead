@@ -89,6 +89,10 @@ local function layerElem(path)
     }
 end
 
+local function updateSize(elem)
+    elem.layout.props.size = util.vector2(baseSize * settings.main.scale, baseSize * settings.main.scale)
+    elem:update()
+end
 
 local heads = {
     hurt = layerElem("Textures/ErnStatusHead/hurt.png"),
@@ -137,6 +141,23 @@ end
 
 local gem = layerElem("Textures/ErnStatusHead/gem.png")
 
+local function lerpColor(a, b, t)
+    return util.color.rgba(
+        a.r + (b.r - a.r) * t,
+        a.g + (b.g - a.g) * t,
+        a.b + (b.b - a.b) * t,
+        a.a + (b.a - a.a) * t
+    )
+end
+
+
+local noMagickaColor = util.color.hex("173e56")
+local maxMagickaColor = util.color.hex("fedf63")
+
+local function setGemColor()
+    gem.layout.props.color = lerpColor(noMagickaColor, maxMagickaColor, magickaStat.current / magickaStat.base)
+    gem:update()
+end
 
 local rootElement = ui.create {
     name = "rootStatusHead",
@@ -152,8 +173,21 @@ local rootElement = ui.create {
     content = ui.content {}
 }
 
+settings.main.subscribe(async:callback(function(_, key)
+    for k, v in pairs(heads) do
+        updateSize(v)
+    end
+    for k, v in pairs(earings) do
+        updateSize(v)
+    end
+    updateSize(gem)
+
+    rootElement.layout.props.relativePosition = util.vector2(settings.main.positionX, settings.main.positionY)
+    updateSize(rootElement)
+end))
 
 local function onUpdate(dt)
+    setGemColor()
     rootElement.layout.content = ui.content({
         heads[selectHead()],
         earings[selectEarings()],
