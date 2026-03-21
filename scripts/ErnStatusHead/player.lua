@@ -117,13 +117,13 @@ local function selectHead()
     return "neutral"
 end
 
-local earings = {
-    left = layerElem("Textures/ErnStatusHead/earings_left.png"),
-    down = layerElem("Textures/ErnStatusHead/earings_down.png"),
-    right = layerElem("Textures/ErnStatusHead/earings_right.png"),
+local earrings = {
+    left = layerElem("Textures/ErnStatusHead/earrings_left.png"),
+    down = layerElem("Textures/ErnStatusHead/earrings_down.png"),
+    right = layerElem("Textures/ErnStatusHead/earrings_right.png"),
 }
 
-local function selectEarings()
+local function selectearrings()
     if pself.controls.sideMovement > 0.5 then
         return "left"
     elseif pself.controls.sideMovement < -0.5 then
@@ -214,7 +214,7 @@ settings.main.subscribe(async:callback(function(_, key)
     for k, v in pairs(heads) do
         updateSize(v)
     end
-    for k, v in pairs(earings) do
+    for k, v in pairs(earrings) do
         updateSize(v)
     end
     updateSize(gem)
@@ -229,7 +229,7 @@ local function onUpdate(dt)
     setGemColor()
     rootElement.layout.content = ui.content({
         heads[selectHead()],
-        earings[selectEarings()],
+        earrings[selectearrings()],
         gem
     })
     rootElement:update()
