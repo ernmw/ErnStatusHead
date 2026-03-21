@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 local interfaces   = require("openmw.interfaces")
 local storage      = require("openmw.storage")
 local MOD_NAME     = require("scripts.ErnStatusHead.ns")
-local util         = require('openmw.util')
 
 local mainGroupKey = "Settings/" .. MOD_NAME
 
@@ -39,9 +38,19 @@ local function init()
         order = 10,
         settings = {
             {
+                key = "fatigueWarning",
+                name = "fatigueWarningName",
+                default = 0.5,
+                renderer = "number",
+                argument = {
+                    integer = false,
+                    min = 0,
+                    max = 1
+                }
+            },
+            {
                 key = "positionX",
                 name = "positionXName",
-                description = "positionXDescription",
                 default = 0.5,
                 renderer = "number",
                 argument = {
@@ -53,7 +62,6 @@ local function init()
             {
                 key = "positionY",
                 name = "positionYName",
-                description = "positionYDescription",
                 default = 0.9,
                 renderer = "number",
                 argument = {
@@ -65,14 +73,19 @@ local function init()
             {
                 key = "scale",
                 name = "scaleName",
-                description = "scaleDescription",
-                default = 1,
+                default = 2,
                 renderer = "number",
                 argument = {
                     integer = false,
                     min = 0,
                     max = 10
                 }
+            },
+            {
+                key = "lock",
+                name = "lockName",
+                renderer = "checkbox",
+                default = false,
             }
         }
     }

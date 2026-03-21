@@ -16,15 +16,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 local MOD_NAME = require("scripts.ErnStatusHead.ns")
-local core = require("openmw.core")
 local pself = require("openmw.self")
-local camera = require('openmw.camera')
 local util = require('openmw.util')
 local async = require("openmw.async")
-local types = require('openmw.types')
-local input = require('openmw.input')
-local controls = require('openmw.interfaces').Controls
-local nearby = require('openmw.nearby')
 local ui = require('openmw.ui')
 local interfaces = require("openmw.interfaces")
 local settings = require("scripts.ErnStatusHead.settings")
@@ -117,7 +111,7 @@ local function selectHead()
         return "hurt"
     elseif attacking then
         return "malice"
-    elseif fatigueStat.current * 2 < fatigueStat.base then
+    elseif fatigueStat.current < (fatigueStat.base * settings.main.fatigueWarning) then
         return "tired"
     end
     return "neutral"
@@ -161,7 +155,7 @@ end
 
 local rootElement = ui.create {
     name = "rootStatusHead",
-    layer = 'HUD',
+    layer = settings.main.lock and 'Scene' or 'Modal',
     type = ui.TYPE.Widget,
     props = {
         relativePosition = util.vector2(settings.main.positionX, settings.main.positionY),
@@ -171,6 +165,49 @@ local rootElement = ui.create {
         autoSize = false,
     },
     content = ui.content {}
+}
+local screenSize = ui.screenSize()
+rootElement.layout.events = {
+    mousePress = async:callback(function(data, elem)
+        if data.button == 1 then -- Left mouse button
+            if settings.main.lock then
+                return
+            end
+            print("left click start head")
+            if not elem.userData then
+                elem.userData = {}
+            end
+            elem.userData.isDragging = true
+            elem.userData.dragStartPosition = data.position
+            elem.userData.windowStartPosition = rootElement.layout.props.relativePosition or util.vector2(0, 0)
+        end
+        rootElement:update()
+    end),
+
+    mouseRelease = async:callback(function(data, elem)
+        print("left click release head")
+        if elem.userData then
+            elem.userData.isDragging = false
+        end
+        rootElement:update()
+    end),
+
+    mouseMove = async:callback(function(data, elem)
+        if elem.userData and elem.userData.isDragging then
+            -- Calculate new position based on mouse movement
+            local deltaX = data.position.x - elem.userData.dragStartPosition.x
+            local deltaY = data.position.y - elem.userData.dragStartPosition.y
+            local newPosition = util.vector2(
+                elem.userData.windowStartPosition.x + deltaX / screenSize.x,
+                elem.userData.windowStartPosition.y + deltaY / screenSize.y
+            )
+            settings.main.section:set("positionX", newPosition.x)
+            settings.main.section:set("positionY", newPosition.y)
+            print("x: " .. tostring(newPosition.x) .. ", y: " .. tostring(newPosition.y))
+            --rootElement.layout.props.relativePosition = newPosition
+            rootElement:update()
+        end
+    end),
 }
 
 settings.main.subscribe(async:callback(function(_, key)
@@ -182,6 +219,8 @@ settings.main.subscribe(async:callback(function(_, key)
     end
     updateSize(gem)
 
+    -- root stuff
+    rootElement.layout.props.layer = settings.main.lock and 'Scene' or 'Modal'
     rootElement.layout.props.relativePosition = util.vector2(settings.main.positionX, settings.main.positionY)
     updateSize(rootElement)
 end))

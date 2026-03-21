@@ -3,3 +3,7 @@ name: "Status Head"
 positionXName: "X Position"
 positionYName: "Y Position"
 scaleName: "Scale"
+lockName: "Lock Position"
+lockDescription: "Requires reload to take effect. If unlocked, you can drag the Status Head around with your mouse to place it."
+
+fatigueWarningName: "Fatigue Warning Threshold"
