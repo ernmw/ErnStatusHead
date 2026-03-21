@@ -225,14 +225,19 @@ settings.main.subscribe(async:callback(function(_, key)
     updateSize(rootElement)
 end))
 
+local delta = 0.2
 local function onUpdate(dt)
-    setGemColor()
-    rootElement.layout.content = ui.content({
-        heads[selectHead()],
-        earrings[selectearrings()],
-        gem
-    })
-    rootElement:update()
+    delta = delta - dt
+    if delta < 0 then
+        setGemColor()
+        rootElement.layout.content = ui.content({
+            heads[selectHead()],
+            earrings[selectearrings()],
+            gem
+        })
+        rootElement:update()
+        delta = 0.2
+    end
 end
 
 return {
