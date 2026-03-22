@@ -84,6 +84,7 @@ local function init()
             {
                 key = "lock",
                 name = "lockName",
+                description = "lockDescription",
                 renderer = "checkbox",
                 default = false,
             }

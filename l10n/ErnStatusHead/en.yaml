@@ -1,4 +1,6 @@
 name: "Status Head"
+description: "Doomguy status face, but Vivec."
+mainSettings: "Settings"
 
 positionXName: "X Position"
 positionYName: "Y Position"

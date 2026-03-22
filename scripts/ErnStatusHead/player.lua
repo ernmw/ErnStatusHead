@@ -89,12 +89,13 @@ local function updateSize(elem)
 end
 
 local heads = {
-    hurt = layerElem("Textures/ErnStatusHead/hurt.png"),
+    hurt_somewhat = layerElem("Textures/ErnStatusHead/hurt_somewhat.png"),
+    hurt_medium = layerElem("Textures/ErnStatusHead/hurt_medium.png"),
+    hurt_very = layerElem("Textures/ErnStatusHead/hurt_very.png"),
     malice = layerElem("Textures/ErnStatusHead/malice.png"),
     malice_hurt = layerElem("Textures/ErnStatusHead/malice_hurt.png"),
     neutral = layerElem("Textures/ErnStatusHead/neutral.png"),
     tired = layerElem("Textures/ErnStatusHead/tired.png"),
-    very_hurt = layerElem("Textures/ErnStatusHead/very_hurt.png"),
 }
 
 local fatigueStat = pself.type.stats.dynamic.fatigue(pself)
@@ -102,13 +103,15 @@ local healthStat = pself.type.stats.dynamic.health(pself)
 local magickaStat = pself.type.stats.dynamic.magicka(pself)
 
 local function selectHead()
-    if healthStat.current * 4 < healthStat.base then
-        return "very_hurt"
-    elseif healthStat.current * 2 < healthStat.base then
+    if healthStat.current < healthStat.base * .2 then
+        return "hurt_very"
+    elseif healthStat.current < healthStat.base * .5 then
+        return "hurt_medium"
+    elseif healthStat.current < healthStat.base * .8 then
         if attacking then
             return "malice_hurt"
         end
-        return "hurt"
+        return "hurt_somewhat"
     elseif attacking then
         return "malice"
     elseif fatigueStat.current < (fatigueStat.base * settings.main.fatigueWarning) then
