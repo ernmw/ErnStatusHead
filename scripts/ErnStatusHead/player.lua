@@ -230,6 +230,7 @@ local function onUpdate(dt)
     delta = delta - dt
     if delta < 0 then
         setGemColor()
+        rootElement.layout.props.visible = interfaces.UI.isHudVisible()
         rootElement.layout.content = ui.content({
             heads[selectHead()],
             earrings[selectearrings()],
